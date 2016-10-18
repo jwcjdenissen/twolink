@@ -1,0 +1,10 @@
+<launch>
+
+  <include file="$(find twolink_gazebo)/launch/twolink_world.launch"/>
+  <include file="$(find twolink_control)/launch/twolink_controllers.launch"/>
+  <!-- Show in Rviz   -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find twolink_control)/launch/rviz.rviz"/>
+  <node name="rqt"  pkg="rqt_gui" type="rqt_gui" respawn="false"
+  output="screen" args="--perspective-file $(find twolink_control)/launch/rqt.perspective"/>
+ 
+</launch>

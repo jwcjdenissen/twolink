@@ -1,0 +1,117 @@
+<?xml version="1.0"?>
+
+<!-- UNIMATE Puma 560 Manipulator -->
+<robot name="twolink" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Some constants -->
+  <xacro:property name="Pi" value="${3.1415926535897931}"/>
+  <xacro:property name="width" value="0.05" />
+  <xacro:property name="length" value="0.5" />
+  <xacro:property name="mass" value="9.375" />
+
+  <!-- Some esthetic color definitions -->
+  <xacro:include filename="$(find twolink_description)/urdf/materials.xacro" />
+
+  <!-- Some xacro macro definitions -->
+  <xacro:include filename="$(find twolink_description)/urdf/definitions.xacro" />
+
+  <!-- Import Gazebo components for now colors and control plugin -->
+  <xacro:include filename="$(find twolink_description)/urdf/twolink.gazebo" />
+
+  <!-- Link definitions -->
+  <link name="world">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </link>
+
+  <link name="link_1">
+
+    <visual>
+      <origin xyz="0 0 ${- length/2}" rpy="0 0 0" />
+      <geometry>
+        <!-- Beam dimensions (width x width x length) -->
+        <box size="${width} ${width} ${length}"/>
+      </geometry>
+      <material name="red_transparent"/>
+    </visual>
+
+    <inertial>
+      <origin xyz="0 0 ${- length/2}" rpy="0 0 0"/>
+      <mass value="${mass}"/>
+      <inertia
+        ixx="${(mass/12.0) * (width*width + length*length)}" ixy="0.0" ixz="0.0"
+        iyy="${(mass/12.0) * (width*width + length*length)}" iyz="0.0"
+        izz="${(mass/12.0) * (2 * width*width)}"/>
+    </inertial>
+
+  </link>
+
+  <link name="link_2">
+
+    <visual>
+      <origin xyz="0 0 ${- length/2}" rpy="0 0 0" />
+      <geometry>
+        <!-- Beam dimensions (width x width x length) -->
+        <box size="${width} ${width} ${length}"/>
+      </geometry>
+      <material name="red_transparent"/>
+    </visual>
+
+    <inertial>
+      <origin xyz="0 0 ${- length/2}" rpy="0 0 0"/>
+      <mass value="${mass}"/>
+      <inertia
+        ixx="${(mass/12.0) * (width*width + length*length)}" ixy="0.0" ixz="0.0"
+        iyy="${(mass/12.0) * (width*width + length*length)}" iyz="0.0"
+        izz="${(mass/12.0) * (2 * width*width)}"/>
+    </inertial>
+
+    </link>
+
+    <!-- Joint definitions -->
+
+    <joint name="joint_1" type="continuous">
+
+      <parent link="world"/>
+      <child link="link_1"/>
+      <origin xyz="0 0 ${2 * length}" rpy="0 0 0" />
+      <axis xyz="1 0 0" />
+      <dynamics damping="50.0"/>
+      <dynamics friction="0.0"/>
+      <dynamics spring_reference="0.0"/>
+      <dynamics spring_stiffness="10.0"/>
+    </joint>
+
+    <joint name="joint_2" type="continuous">
+
+      <parent link="link_1"/>
+      <child link="link_2"/>
+      <origin xyz="0 0 ${- length}" rpy="0 0 0" />
+      <axis xyz="1 0 0" />
+      <dynamics damping="50.0" spring_stiffness="200.0" />
+
+    </joint>
+
+    <transmission name="joint_1_transmission">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="joint_1">
+        <hardwareInterface>EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="joint_1_actuator">
+        <hardwareInterface>EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+
+    <transmission name="joint_2_transmission">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="joint_2">
+        <hardwareInterface>EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="joint_2_actuator">
+        <hardwareInterface>EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
+
+
+  </robot>
